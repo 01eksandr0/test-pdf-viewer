@@ -3,16 +3,13 @@
     <!-- PDF Viewer -->
     <div class="pdf-container">
       <pdf-viewer-with-watermark
-        v-if="pdfSource"
         ref="pdfViewer"
-        :pdf="pdfSource"
+        :server-url="serverUrl"
         :title="true"
-        :config="pdfConfig"
         @after-created="onAfterCreated"
         @open="onOpen"
         @pages-rendered="onPagesRendered"
       />
-      <div v-else class="no-pdf">Завантаження PDF...</div>
     </div>
   </div>
 </template>
@@ -27,57 +24,7 @@ export default defineComponent({
     PdfViewerWithWatermark,
   },
   setup() {
-    const pdfSource = ref(
-      "https://litmir.club/BookFileDownloadLink/?id=2563528&inline=1"
-    );
-
-    const pdfConfig = ref({
-      sidebar: {
-        viewOutline: true,
-        viewThumbnail: true,
-        viewAttachments: true,
-      },
-      toolbar: {
-        toolbarViewerLeft: {
-          findbar: true,
-          previous: true,
-          next: true,
-          pageNumber: true,
-        },
-        toolbarViewerRight: {
-          presentationMode: true,
-          openFile: true,
-          print: true,
-          download: true,
-          viewBookmark: true,
-        },
-        toolbarViewerMiddle: {
-          zoomOut: true,
-          zoomIn: true,
-          scaleSelectContainer: true,
-        },
-      },
-      secondaryToolbar: {
-        secondaryPresentationMode: true,
-        secondaryOpenFile: true,
-        secondaryPrint: true,
-        secondaryDownload: true,
-        secondaryViewBookmark: true,
-        firstPage: true,
-        lastPage: true,
-        pageRotateCw: true,
-        pageRotateCcw: true,
-        cursorSelectTool: true,
-        cursorHandTool: true,
-        scrollVertical: true,
-        scrollHorizontal: true,
-        scrollWrapped: true,
-        spreadNone: true,
-        spreadOdd: true,
-        spreadEven: true,
-        documentProperties: true,
-      },
-    });
+    const serverUrl = ref("https://cool-ends-fold.loca.lt");
 
     const onAfterCreated = (pdfApp) => {
       console.log("PDF приложение создано:", pdfApp);
@@ -92,8 +39,7 @@ export default defineComponent({
     };
 
     return {
-      pdfSource,
-      pdfConfig,
+      serverUrl,
       onAfterCreated,
       onOpen,
       onPagesRendered,
@@ -107,7 +53,6 @@ export default defineComponent({
   height: 100vh;
   display: flex;
   flex-direction: column;
-  padding: 20px;
   background: #f8f9fa;
 }
 
@@ -115,6 +60,54 @@ h1 {
   margin: 0 0 20px 0;
   color: #333;
   text-align: center;
+}
+
+.watermark-controls {
+  background: #f8f9fa;
+  padding: 15px;
+  border-bottom: 1px solid #dee2e6;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  align-items: flex-end;
+
+  .control-group {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    min-width: 150px;
+
+    label {
+      font-size: 12px;
+      font-weight: bold;
+      color: #495057;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+
+      input[type="checkbox"] {
+        margin: 0;
+        width: auto;
+      }
+    }
+
+    input[type="text"] {
+      padding: 6px 8px;
+      border: 1px solid #ced4da;
+      border-radius: 4px;
+      font-size: 12px;
+    }
+
+    input[type="range"] {
+      width: 120px;
+    }
+
+    span {
+      font-size: 11px;
+      color: #6c757d;
+      font-weight: 500;
+    }
+  }
 }
 
 .example-controls {
@@ -156,10 +149,8 @@ h1 {
 .pdf-container {
   flex: 1;
   background: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  overflow: hidden;
   min-height: 500px;
+  position: relative;
 }
 
 .no-pdf {
@@ -169,6 +160,104 @@ h1 {
   height: 100%;
   color: #666;
   font-size: 18px;
+}
+
+.loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: #666;
+
+  .spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #007bff;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 20px;
+  }
+
+  p {
+    font-size: 16px;
+    margin: 0;
+  }
+
+  .progress-bar {
+    width: 300px;
+    height: 8px;
+    background: #e9ecef;
+    border-radius: 4px;
+    overflow: hidden;
+    margin: 15px 0;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #007bff, #0056b3);
+    transition: width 0.3s ease;
+    border-radius: 4px;
+  }
+
+  .progress-text {
+    font-size: 14px;
+    color: #666;
+    margin: 5px 0 0 0;
+  }
+
+  .status-text {
+    font-size: 12px;
+    color: #007bff;
+    margin: 10px 0 0 0;
+    font-weight: 500;
+  }
+}
+
+.error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: #dc3545;
+  text-align: center;
+  padding: 20px;
+
+  h3 {
+    margin: 0 0 10px 0;
+    color: #dc3545;
+  }
+
+  p {
+    margin: 0 0 20px 0;
+    font-size: 14px;
+    color: #666;
+  }
+
+  .retry-btn {
+    background: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+
+    &:hover {
+      background: #0056b3;
+    }
+  }
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 .examples {

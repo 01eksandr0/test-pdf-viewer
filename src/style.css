@@ -8,3 +8,19 @@ body {
   background-color: #f0f0f0;
   font-family: Arial, sans-serif;
 }
+
+/* PDF Viewer Styles */
+#vuePdfApp {
+  height: 100% !important;
+  width: 100% !important;
+}
+
+#outerContainer {
+  height: 100% !important;
+  width: 100% !important;
+}
+
+#mainContainer {
+  height: 100% !important;
+  width: 100% !important;
+}
