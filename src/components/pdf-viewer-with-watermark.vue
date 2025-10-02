@@ -76,10 +76,6 @@ export default defineComponent({
       type: Number,
       default: 1,
     },
-    showControls: {
-      type: Boolean,
-      default: true,
-    },
   },
   emits: ["after-created", "open", "pages-rendered"],
   setup(props, ctx) {

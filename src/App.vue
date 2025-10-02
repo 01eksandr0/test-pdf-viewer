@@ -6,7 +6,8 @@
         v-if="pdfSource"
         ref="pdfViewer"
         :pdf="pdfSource"
-        :show-controls="true"
+        :title="true"
+        :config="pdfConfig"
         @after-created="onAfterCreated"
         @open="onOpen"
         @pages-rendered="onPagesRendered"
@@ -30,6 +31,54 @@ export default defineComponent({
       "https://litmir.club/BookFileDownloadLink/?id=2563528&inline=1"
     );
 
+    const pdfConfig = ref({
+      sidebar: {
+        viewOutline: true,
+        viewThumbnail: true,
+        viewAttachments: true,
+      },
+      toolbar: {
+        toolbarViewerLeft: {
+          findbar: true,
+          previous: true,
+          next: true,
+          pageNumber: true,
+        },
+        toolbarViewerRight: {
+          presentationMode: true,
+          openFile: true,
+          print: true,
+          download: true,
+          viewBookmark: true,
+        },
+        toolbarViewerMiddle: {
+          zoomOut: true,
+          zoomIn: true,
+          scaleSelectContainer: true,
+        },
+      },
+      secondaryToolbar: {
+        secondaryPresentationMode: true,
+        secondaryOpenFile: true,
+        secondaryPrint: true,
+        secondaryDownload: true,
+        secondaryViewBookmark: true,
+        firstPage: true,
+        lastPage: true,
+        pageRotateCw: true,
+        pageRotateCcw: true,
+        cursorSelectTool: true,
+        cursorHandTool: true,
+        scrollVertical: true,
+        scrollHorizontal: true,
+        scrollWrapped: true,
+        spreadNone: true,
+        spreadOdd: true,
+        spreadEven: true,
+        documentProperties: true,
+      },
+    });
+
     const onAfterCreated = (pdfApp) => {
       console.log("PDF приложение создано:", pdfApp);
     };
@@ -44,6 +93,7 @@ export default defineComponent({
 
     return {
       pdfSource,
+      pdfConfig,
       onAfterCreated,
       onOpen,
       onPagesRendered,
